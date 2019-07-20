@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>LGTMi</title>
+    <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css" />
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        height: 100%;
+      }
+
+      body {
+        font-family: 'Source Code Pro', monospace;
+        background-color: #fafafa;
+      }
+
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        width: 100vw;
+        max-width: 400px;
+        min-height: 100%;
+        margin: auto;
+      }
+
+      h1 {
+        font-size: 1rem;
+        font-weight: normal;
+        margin-bottom: 20px;
+      }
+
+      .column,
+      form {
+        width: 100%;
+        display: flex;
+      }
+
+      .column.arrow {
+        justify-content: center;
+      }
+
+      .column:not(:last-of-type) {
+        margin-bottom: 20px;
+      }
+
+      input[type='text'] {
+        flex-grow: 1;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 5px;
+      }
+
+      button {
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 5px 15px;
+      }
+
+      #preview {
+        width: 100vw;
+        height: 100vw;
+        max-width: 400px;
+        max-height: 400px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #ddd;
+        color: #bbb;
+      }
+
+      .preview-img {
+        max-width: 100%;
+        max-height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>LGTMi</h1>
+      <div class="column">
+        <form id="form">
+          <input type="text" id="url" autocomplete="off" placeholder="source URL" />
+          <button type="submit">
+            generate
+          </button>
+        </form>
+      </div>
+      <div class="column arrow">
+        ↓↓↓↓
+      </div>
+      <div id="preview" class="column">
+        result
+      </div>
+      <div class="column">
+        <input
+          type="text"
+          id="productUrl"
+          autocomplete="off"
+          placeholder="result(image url)"
+          onClick="this.setSelectionRange(0, this.value.length)"
+        />
+      </div>
+      <div class="column">
+        <input
+          type="text"
+          id="githubMarkdown"
+          autocomplete="off"
+          placeholder="result(github markdown)"
+          onClick="this.setSelectionRange(0, this.value.length)"
+        />
+      </div>
+    </main>
+    <script>
+      const input = document.querySelector('#url');
+      const resultInput = document.querySelector('#productUrl');
+      const resultGithubMarkdownInput = document.querySelector('#githubMarkdown');
+      const form = document.querySelector('#form');
+      const preview = document.querySelector('#preview');
+
+      const handler = () => {
+        const resourceUrl = input.value;
+        const productUrl = `${location.protocol}//${location.host}/?url=${encodeURIComponent(resourceUrl)}`;
+        const img = document.createElement('img');
+        img.setAttribute('src', productUrl);
+        img.setAttribute('class', 'preview-img');
+        while (preview.firstChild) {
+          preview.removeChild(preview.firstChild);
+        }
+        preview.appendChild(img);
+        input.value = '';
+        resultInput.value = productUrl;
+        resultGithubMarkdownInput.value = `![LGTM](${productUrl})`;
+      };
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        handler();
+      });
+    </script>
+  </body>
+</html>

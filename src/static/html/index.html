@@ -52,6 +52,10 @@
         flex-grow: 1;
       }
 
+      .labels {
+        margin-bottom: 8px;
+      }
+
       .url-input {
         width: 100%;
         display: flex;
@@ -99,18 +103,20 @@
       <h1>LGTMi</h1>
       <div class="column">
         <form id="form">
-          <label>
-            <input type="radio" name="position" value="top" class="radio">
-            top
-          </label>
-          <label>
-            <input type="radio" name="position" value="middle" checked class="radio">
-            middle
-          </label>
-          <label>
-            <input type="radio" name="position" value="bottom" class="radio">
-            bottom
-          </label>
+          <div class="labels">
+            <label>
+              <input type="radio" name="position" value="top" class="radio">
+              top
+            </label>
+            <label>
+              <input type="radio" name="position" value="middle" checked class="radio">
+              middle
+            </label>
+            <label>
+              <input type="radio" name="position" value="bottom" class="radio">
+              bottom
+            </label>
+          </div>
           <div class="url-input">
             <input type="text" name="url" id="url" autocomplete="off" placeholder="source URL" class="text-input url" />
             <button type="submit" class="button">

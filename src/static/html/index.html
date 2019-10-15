@@ -99,8 +99,20 @@
       <h1>LGTMi</h1>
       <div class="column">
         <form id="form">
+          <label>
+            <input type="radio" name="position" value="top" class="radio">
+            top
+          </label>
+          <label>
+            <input type="radio" name="position" value="middle" checked class="radio">
+            middle
+          </label>
+          <label>
+            <input type="radio" name="position" value="bottom" class="radio">
+            bottom
+          </label>
           <div class="url-input">
-            <input type="text" id="url" autocomplete="off" placeholder="source URL" class="text-input url" />
+            <input type="text" name="url" id="url" autocomplete="off" placeholder="source URL" class="text-input url" />
             <button type="submit" class="button">
               generate
             </button>
@@ -138,15 +150,20 @@
       </div>
     </main>
     <script>
-      const input = document.querySelector('#url');
+      const form = document.querySelector('#form');
+      const radios = document.querySelectorAll('.radio');
       const resultInput = document.querySelector('#productUrl');
       const resultGithubMarkdownInput = document.querySelector('#githubMarkdown');
-      const form = document.querySelector('#form');
       const preview = document.querySelector('#preview');
 
       const handler = () => {
-        const resourceUrl = input.value;
-        const productUrl = `${location.protocol}//${location.host}/?url=${encodeURIComponent(resourceUrl)}`;
+        const formData = new FormData(form);
+        const resourceUrl = formData.get('url');
+        const position = new FormData(form).get('position');
+        if (resourceUrl === '') {
+          return;
+        }
+        const productUrl = `${location.protocol}//${location.host}/?url=${encodeURIComponent(resourceUrl)}&p=${position}`;
         const img = document.createElement('img');
         img.setAttribute('src', productUrl);
         img.setAttribute('class', 'preview-img');
@@ -154,7 +171,6 @@
           preview.removeChild(preview.firstChild);
         }
         preview.appendChild(img);
-        input.value = '';
         resultInput.value = productUrl;
         resultGithubMarkdownInput.value = `![LGTM](${productUrl})`;
       };
@@ -162,6 +178,11 @@
       form.addEventListener('submit', e => {
         e.preventDefault();
         handler();
+      });
+      radios.forEach(radio => {
+        radio.addEventListener('change', e => {
+          handler();
+        })
       });
     </script>
   </body>

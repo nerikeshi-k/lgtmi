@@ -6,14 +6,13 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>LGTMi</title>
     <link rel="stylesheet" href="https://unpkg.com/ress/dist/ress.min.css" />
-    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" />
     <style>
       *,
       *::before,
       *::after {
         box-sizing: border-box;
       }
-
       html,
       body {
         height: 100%;
@@ -41,13 +40,29 @@
         margin-bottom: 20px;
       }
 
-      .column,
-      form {
+      .text-input {
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 5px;
+      }
+
+      .text-input.url {
+        width: auto;
+        flex-grow: 1;
+      }
+
+      .url-input {
         width: 100%;
         display: flex;
       }
 
+      .column {
+        width: 100%;
+      }
+
       .column.arrow {
+        display: flex;
         justify-content: center;
       }
 
@@ -55,14 +70,7 @@
         margin-bottom: 20px;
       }
 
-      input[type='text'] {
-        flex-grow: 1;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        padding: 5px;
-      }
-
-      button {
+      .button {
         background-color: #fff;
         border: 1px solid #ccc;
         padding: 5px 15px;
@@ -91,10 +99,24 @@
       <h1>LGTMi</h1>
       <div class="column">
         <form id="form">
-          <input type="text" id="url" autocomplete="off" placeholder="source URL" />
-          <button type="submit">
-            generate
-          </button>
+          <label>
+            <input type="radio" name="position" value="top" class="radio">
+            top
+          </label>
+          <label>
+            <input type="radio" name="position" value="middle" checked class="radio">
+            middle
+          </label>
+          <label>
+            <input type="radio" name="position" value="bottom" class="radio">
+            bottom
+          </label>
+          <div class="url-input">
+            <input type="text" name="url" id="url" autocomplete="off" placeholder="source URL" class="text-input url" />
+            <button type="submit" class="button">
+              generate
+            </button>
+          </div>
         </form>
       </div>
       <div class="column arrow">
@@ -110,6 +132,7 @@
           autocomplete="off"
           placeholder="result(image url)"
           onClick="this.setSelectionRange(0, this.value.length)"
+          class="text-input" 
         />
       </div>
       <div class="column">
@@ -119,19 +142,28 @@
           autocomplete="off"
           placeholder="result(github markdown)"
           onClick="this.setSelectionRange(0, this.value.length)"
+          class="text-input" 
         />
+      </div>
+      <div class="contribute">
+        <a href="https://github.com/nerikeshi-k/lgtmi">source</a>
       </div>
     </main>
     <script>
-      const input = document.querySelector('#url');
+      const form = document.querySelector('#form');
+      const radios = document.querySelectorAll('.radio');
       const resultInput = document.querySelector('#productUrl');
       const resultGithubMarkdownInput = document.querySelector('#githubMarkdown');
-      const form = document.querySelector('#form');
       const preview = document.querySelector('#preview');
 
       const handler = () => {
-        const resourceUrl = input.value;
-        const productUrl = `${location.protocol}//${location.host}/?url=${encodeURIComponent(resourceUrl)}`;
+        const formData = new FormData(form);
+        const resourceUrl = formData.get('url');
+        const position = new FormData(form).get('position');
+        if (resourceUrl === '') {
+          return;
+        }
+        const productUrl = `${location.protocol}//${location.host}/?url=${encodeURIComponent(resourceUrl)}&p=${position}`;
         const img = document.createElement('img');
         img.setAttribute('src', productUrl);
         img.setAttribute('class', 'preview-img');
@@ -139,7 +171,6 @@
           preview.removeChild(preview.firstChild);
         }
         preview.appendChild(img);
-        input.value = '';
         resultInput.value = productUrl;
         resultGithubMarkdownInput.value = `![LGTM](${productUrl})`;
       };
@@ -147,6 +178,11 @@
       form.addEventListener('submit', e => {
         e.preventDefault();
         handler();
+      });
+      radios.forEach(radio => {
+        radio.addEventListener('change', e => {
+          handler();
+        })
       });
     </script>
   </body>

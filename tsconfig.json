@@ -8,8 +8,7 @@
     "sourceMap": true,
     "outDir": "./dist",
     "noEmitOnError": true,
-    "declaration": true,
-    "lib": ["es2017", "dom"]
+    "declaration": true
   },
   "exclude": ["node_modules", "dist"]
 }

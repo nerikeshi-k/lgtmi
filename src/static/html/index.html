@@ -13,7 +13,6 @@
       *::after {
         box-sizing: border-box;
       }
-
       html,
       body {
         height: 100%;
@@ -41,13 +40,29 @@
         margin-bottom: 20px;
       }
 
-      .column,
-      form {
+      .text-input {
+        width: 100%;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        padding: 5px;
+      }
+
+      .text-input.url {
+        width: auto;
+        flex-grow: 1;
+      }
+
+      .url-input {
         width: 100%;
         display: flex;
       }
 
+      .column {
+        width: 100%;
+      }
+
       .column.arrow {
+        display: flex;
         justify-content: center;
       }
 
@@ -55,14 +70,7 @@
         margin-bottom: 20px;
       }
 
-      input[type='text'] {
-        flex-grow: 1;
-        background-color: #fff;
-        border: 1px solid #ccc;
-        padding: 5px;
-      }
-
-      button {
+      .button {
         background-color: #fff;
         border: 1px solid #ccc;
         padding: 5px 15px;
@@ -91,10 +99,12 @@
       <h1>LGTMi</h1>
       <div class="column">
         <form id="form">
-          <input type="text" id="url" autocomplete="off" placeholder="source URL" />
-          <button type="submit">
-            generate
-          </button>
+          <div class="url-input">
+            <input type="text" id="url" autocomplete="off" placeholder="source URL" class="text-input url" />
+            <button type="submit" class="button">
+              generate
+            </button>
+          </div>
         </form>
       </div>
       <div class="column arrow">
@@ -110,6 +120,7 @@
           autocomplete="off"
           placeholder="result(image url)"
           onClick="this.setSelectionRange(0, this.value.length)"
+          class="text-input" 
         />
       </div>
       <div class="column">
@@ -119,10 +130,11 @@
           autocomplete="off"
           placeholder="result(github markdown)"
           onClick="this.setSelectionRange(0, this.value.length)"
+          class="text-input" 
         />
       </div>
       <div class="contribute">
-        <a href="https://github.com/nerikeshi-k/lgtmi">contribute</a>
+        <a href="https://github.com/nerikeshi-k/lgtmi">source</a>
       </div>
     </main>
     <script>

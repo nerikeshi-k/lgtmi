@@ -52,7 +52,7 @@
         flex-grow: 1;
       }
 
-      .labels {
+      .options {
         margin-bottom: 8px;
       }
 
@@ -103,7 +103,7 @@
       <h1>LGTMi</h1>
       <div class="column">
         <form id="form">
-          <div class="labels">
+          <div class="options">
             <label>
               <input type="radio" name="position" value="top" class="radio">
               top
@@ -115,6 +115,12 @@
             <label>
               <input type="radio" name="position" value="bottom" class="radio">
               bottom
+            </label>
+          </div>
+          <div class="options">
+            <label>
+              <input type="checkbox" name="shadow" class="checkbox" checked>
+              shadow
             </label>
           </div>
           <div class="url-input">
@@ -158,6 +164,7 @@
     <script>
       const form = document.querySelector('#form');
       const radios = document.querySelectorAll('.radio');
+      const checkboxes = document.querySelectorAll('.checkbox');
       const resultInput = document.querySelector('#productUrl');
       const resultGithubMarkdownInput = document.querySelector('#githubMarkdown');
       const preview = document.querySelector('#preview');
@@ -166,10 +173,11 @@
         const formData = new FormData(form);
         const resourceUrl = formData.get('url');
         const position = new FormData(form).get('position');
+        const withShadow = formData.get('shadow') != null;
         if (resourceUrl === '') {
           return;
         }
-        const productUrl = `${location.protocol}//${location.host}/?url=${encodeURIComponent(resourceUrl)}&p=${position}`;
+        const productUrl = `${location.protocol}//${location.host}/?url=${encodeURIComponent(resourceUrl)}&p=${position}${withShadow ? '' : '&noshadow'}`;
         const img = document.createElement('img');
         img.setAttribute('src', productUrl);
         img.setAttribute('class', 'preview-img');
@@ -187,6 +195,11 @@
       });
       radios.forEach(radio => {
         radio.addEventListener('change', e => {
+          handler();
+        })
+      });
+      checkboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', e => {
           handler();
         })
       });

@@ -1,4 +1,4 @@
-import { CanvasRenderingContext2D, createCanvas, loadImage, Image } from 'canvas';
+import { createCanvas, Image, loadImage } from 'canvas';
 
 interface Size {
   width: number;
@@ -12,13 +12,13 @@ export interface TextStyle {
   shadowColor: string | null;
 }
 
-const MAX_WIDTH = 420;
-const MAX_HEIGHT = 420;
+const MAX_WIDTH = 450;
+const MAX_HEIGHT = 450;
 const DEFAULT_TEXT_STYLE: TextStyle = {
   color: '#ffffff',
-  fontFamily: 'Open Sans',
+  fontFamily: 'Noto Sans',
   position: 'middle',
-  shadowColor: '#0005'
+  shadowColor: '#0004'
 };
 
 const download = async (sourceImageUrl: string) => {
@@ -61,21 +61,36 @@ const paint = (image: Image, optionalStyle?: Partial<TextStyle>): Buffer => {
   ctx.drawImage(image, 0, 0, image.width, image.height, 0, 0, canvasSize.width, canvasSize.height);
 
   // write LGTM
-  const text = 'LGTM';
+  const text = 'L G T M';
   const maxWidth = canvasSize.width * 0.85;
   const fontSize = getSuitableFontSize(text, canvasSize, maxWidth, style.fontFamily);
+  const x = canvasSize.width / 2;
+  const textHeight = getTextHeight(text, fontSize, style.fontFamily);
+  const y = getYPosition(textHeight, canvasSize, style.position);
   ctx.font = createFontString(fontSize, style.fontFamily);
   ctx.textAlign = 'center';
-  ctx.textBaseline = style.position;
-  const x = canvasSize.width / 2
-  const y = getYPosition(canvasSize.height, style.position);
+  ctx.textBaseline = 'middle';
+  // write shadow
   if (style.shadowColor != null) {
     ctx.fillStyle = style.shadowColor;
     ctx.fillText(text, x + fontSize / 25, y + fontSize / 25);
-
   }
   ctx.fillStyle = style.color;
   ctx.fillText(text, x, y);
+
+  // write Looks Good To Me
+  const miniText = 'L   o   o   k   s        G   o   o   d        T   o        M   e';
+  const miniFontSize = fontSize * 0.17;
+  ctx.font = createFontString(miniFontSize, style.fontFamily);
+  ctx.textAlign = 'center';
+  const miniY = y + textHeight * 0.75;
+  // write shadow
+  if (style.shadowColor != null) {
+    ctx.fillStyle = style.shadowColor;
+    ctx.fillText(miniText, x + fontSize / 45, miniY + fontSize / 45);
+  }
+  ctx.fillStyle = style.color;
+  ctx.fillText(miniText, x, miniY);
 
   return canvas.toBuffer('image/png');
 };
@@ -85,27 +100,47 @@ const getSuitableFontSize = (text: string, canvasSize: Size, maxWidth: number, f
   const canvas = createCanvas(canvasSize.width, canvasSize.height);
   const ctx = canvas.getContext('2d');
 
-  let fontSize = 200;
-
-  do {
-    fontSize = fontSize - 4;
+  for (let fontSize = 100; fontSize > 10; fontSize -= 4) {
     ctx.font = createFontString(fontSize, fontFamily);
-  } while (ctx.measureText(text).width > maxWidth && fontSize > 10);
-  return fontSize;
+    if (ctx.measureText(text).width < maxWidth) {
+      return fontSize;
+    }
+  }
+  return 10;
 };
 
-const createFontString = (fontSize: number, fontFamily: string): string => `bold ${fontSize}px "${fontFamily}"`;
+const createFontString = (fontSize: number, fontFamily: string, bold: boolean = true): string =>
+  `${bold ? 'bold ' : ''}${fontSize}px "${fontFamily}"`;
 
-const getYPosition = (canvasHeight: number, position: TextStyle['position']): number => {
-  switch (position) {
-    case 'top':
-      return 0;
-    case 'bottom':
-      return canvasHeight;
-    case 'middle':
-    default:
-      return canvasHeight * 0.5;
+const getTextHeight = (text: string, fontSize: number, fontFamily: string): number => {
+  const canvas = createCanvas(MAX_WIDTH, MAX_HEIGHT);
+  const ctx = canvas.getContext('2d');
+  ctx.font = createFontString(fontSize, fontFamily);
+  const textMetrics = ctx.measureText(text);
+  return textMetrics.actualBoundingBoxAscent - textMetrics.actualBoundingBoxDescent;
+};
+
+const getYPosition = (textHeight: number, canvasSize: Size, position: TextStyle['position']): number => {
+  if (position === 'middle') {
+    return canvasSize.height / 2;
   }
+  if (position === 'top') {
+    for (let y = 0; y < canvasSize.height / 2; y += 5) {
+      if (y - textHeight / 2 > canvasSize.height * 0.05) {
+        return y;
+      }
+    }
+    return canvasSize.height / 2;
+  }
+  if (position === 'bottom') {
+    for (let y = canvasSize.height; y > canvasSize.height / 2; y -= 5) {
+      if (y + textHeight / 2 < canvasSize.height * 0.9) {
+        return y;
+      }
+    }
+    return canvasSize.height / 2;
+  }
+  return canvasSize.height / 2;
 };
 
 export const createImage = async (

@@ -12,8 +12,8 @@ export interface TextStyle {
   shadowColor: string | null;
 }
 
-const MAX_WIDTH = 600;
-const MAX_HEIGHT = 600;
+const MAX_WIDTH = 420;
+const MAX_HEIGHT = 420;
 const DEFAULT_TEXT_STYLE: TextStyle = {
   color: '#ffffff',
   fontFamily: 'Open Sans',

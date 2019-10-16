@@ -3,6 +3,7 @@ import { TextStyle } from "./painter";
 interface URLQuery {
   url?: string;
   p?: string;
+  c?: string;
   noshadow?: string;
 }
 
@@ -23,6 +24,9 @@ export const getParams = (query: Partial<URLQuery>): Params | null => {
       }
       if (query.noshadow != null) {
         result.style['shadowColor'] = null;
+      }
+      if (query.c != null) {
+        result.style['color'] = query.c;
       }
       return result;
     } catch (e) {

@@ -105,21 +105,31 @@
         <form id="form">
           <div class="options">
             <label>
-              <input type="radio" name="position" value="top" class="radio">
+              <input type="radio" name="color" value="white" class="radio" checked />
+              white
+            </label>
+            <label>
+              <input type="radio" name="color" value="black" class="radio" />
+              black
+            </label>
+          </div>
+          <div class="options">
+            <label>
+              <input type="radio" name="position" value="top" class="radio" />
               top
             </label>
             <label>
-              <input type="radio" name="position" value="middle" checked class="radio">
+              <input type="radio" name="position" value="middle" checked class="radio" />
               middle
             </label>
             <label>
-              <input type="radio" name="position" value="bottom" class="radio">
+              <input type="radio" name="position" value="bottom" class="radio" />
               bottom
             </label>
           </div>
           <div class="options">
             <label>
-              <input type="checkbox" name="shadow" class="checkbox" checked>
+              <input type="checkbox" name="shadow" class="checkbox" checked />
               shadow
             </label>
           </div>
@@ -144,7 +154,7 @@
           autocomplete="off"
           placeholder="result(image url)"
           onClick="this.setSelectionRange(0, this.value.length)"
-          class="text-input" 
+          class="text-input"
         />
       </div>
       <div class="column">
@@ -154,7 +164,7 @@
           autocomplete="off"
           placeholder="result(github markdown)"
           onClick="this.setSelectionRange(0, this.value.length)"
-          class="text-input" 
+          class="text-input"
         />
       </div>
       <div class="contribute">
@@ -172,12 +182,15 @@
       const handler = () => {
         const formData = new FormData(form);
         const resourceUrl = formData.get('url');
-        const position = new FormData(form).get('position');
+        const color = formData.get('color') === 'black' ? '#222' : null;
+        const position = formData.get('position');
         const withShadow = formData.get('shadow') != null;
         if (resourceUrl === '') {
           return;
         }
-        const productUrl = `${location.protocol}//${location.host}/?url=${encodeURIComponent(resourceUrl)}&p=${position}${withShadow ? '' : '&noshadow'}`;
+        const productUrl = `${location.protocol}//${location.host}/?url=${encodeURIComponent(
+          resourceUrl
+        )}&p=${position}${withShadow ? '' : '&noshadow'}${color != null ? `&c=${encodeURIComponent(color)}` : ''}`;
         const img = document.createElement('img');
         img.setAttribute('src', productUrl);
         img.setAttribute('class', 'preview-img');
@@ -196,12 +209,12 @@
       radios.forEach(radio => {
         radio.addEventListener('change', e => {
           handler();
-        })
+        });
       });
       checkboxes.forEach(checkbox => {
         checkbox.addEventListener('change', e => {
           handler();
-        })
+        });
       });
     </script>
   </body>

@@ -7,6 +7,7 @@ interface Size {
 
 export interface TextStyle {
   color: string;
+  subColor: string;
   fontFamily: string;
   position: 'top' | 'middle' | 'bottom';
   shadowColor: string | null;
@@ -16,6 +17,7 @@ const MAX_WIDTH = 450;
 const MAX_HEIGHT = 450;
 const DEFAULT_TEXT_STYLE: TextStyle = {
   color: '#ffffff',
+  subColor: '#ffffff',
   fontFamily: 'Noto Sans',
   position: 'middle',
   shadowColor: '#0004'
@@ -89,7 +91,7 @@ const paint = (image: Image, optionalStyle?: Partial<TextStyle>): Buffer => {
     ctx.fillStyle = style.shadowColor;
     ctx.fillText(miniText, x + fontSize / 45, miniY + fontSize / 45);
   }
-  ctx.fillStyle = style.color;
+  ctx.fillStyle = style.subColor;
   ctx.fillText(miniText, x, miniY);
 
   return canvas.toBuffer('image/png');
